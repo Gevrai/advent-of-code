@@ -10,8 +10,6 @@ import (
 	"strings"
 )
 
-const WorkingDir = "/home/gevrai/work/advent-of-code-2019/"
-
 func ReadInputFileRelative() (line []string) {
 	// Relative path to where function is defined
 	_, file, _, ok := runtime.Caller(1)
@@ -78,4 +76,12 @@ func GCD(a, b int) int {
 		a, b = b, a%b
 	}
 	return a
+}
+
+func AbsInt64(i int64) int64 {
+	if i < 0 {
+		return -i
+	} else {
+		return i
+	}
 }

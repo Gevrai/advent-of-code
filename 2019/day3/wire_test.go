@@ -2,8 +2,11 @@ package main
 
 import (
 	"fmt"
-	"github.com/stretchr/testify/require"
 	"testing"
+
+	"github.com/stretchr/testify/require"
+
+	. "advent-of-code-2019/utils"
 )
 
 func TestCreateWire(t *testing.T) {
