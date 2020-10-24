@@ -3,34 +3,33 @@ package main
 import (
 	. "advent-of-code-2019/utils"
 	"fmt"
+	"strings"
 )
 
 func main() {
 	input := ReadInputFileRelative()
 
-	//input = []string{
-	//	"<x=-1, y=0, z=2>",
-	//	"<x=2, y=-10, z=-7>",
-	//	"<x=4, y=-8, z=8>",
-	//	"<x=3, y=5, z=-1>",
-	//}
+	system := NewSystem(input)
 
-	system, err := NewSystem(input)
-	if err != nil {
-		panic(err)
-	}
-
-	println("Step 0")
-	system.Print()
-	for i := 0; i < 1000; i++ {
+	for i := 0; i < 10; i++ {
 		system.Update()
-		println("Step ", i+1)
-		system.Print()
-		println(system.Energy())
+		println(system.SPrint())
 	}
 
 	println("Part one:", system.Energy())
 
+	initialSystem := NewSystem(input)
+	system = NewSystem(input)
+
+	steps := 0
+	for {
+		steps++
+		system.Update()
+		if system.Equal(initialSystem) {
+			break
+		}
+	}
+	println("Part two:", steps)
 }
 
 type Body struct {
@@ -45,18 +44,7 @@ func (b *Body) AttractFrom(other Body) {
 	b.vel.Z += compare(b.pos.Z, other.pos.Z)
 }
 
-func compare(i, j int64) int64 {
-	switch {
-	case i < j:
-		return 1
-	case i > j:
-		return -1
-	default:
-		return 0
-	}
-}
-
-func (b *Body) Update() {
+func (b *Body) UpdatePosition() {
 	b.pos.X += b.vel.X
 	b.pos.Y += b.vel.Y
 	b.pos.Z += b.vel.Z
@@ -81,29 +69,75 @@ func (b *Body) String() string {
 }
 
 type System struct {
-	bodies []*Body
+	bodies []Body
 }
 
-func NewSystem(input []string) (*System, error) {
+func NewSystem(input []string) *System {
 	system := &System{}
-	for _, s := range input {
-		p, err := NewPointFromInput(s)
-		if err != nil {
-			return nil, err
-		}
-		system.bodies = append(system.bodies, &Body{pos: p})
+	system.bodies = make([]Body, len(input))
+	for i, s := range input {
+		p := NewPointFromInput(s)
+		system.bodies[i] = Body{pos: p}
 	}
-	return system, nil
+	return system
 }
 
 func (s *System) Update() {
-	for _, b1 := range s.bodies {
-		for _, b2 := range s.bodies {
-			b1.AttractFrom(*b2)
+	for i := range s.bodies {
+		for j := range s.bodies {
+			s.bodies[i].AttractFrom(s.bodies[j])
 		}
 	}
-	for _, b := range s.bodies {
-		b.Update()
+	for i := range s.bodies {
+		s.bodies[i].UpdatePosition()
+	}
+}
+
+func (s *System) UpdateFast() {
+	size := len(s.bodies)
+	for i := 0; i < size; i++ {
+		for j := i + 1; j < size; j++ {
+			s.AttractBodies(i, j)
+		}
+		s.bodies[i].UpdatePosition()
+	}
+}
+
+func (s *System) AttractBodies(i, j int) {
+
+	if s.bodies[i].pos.X < s.bodies[j].pos.X {
+		s.bodies[i].vel.X++
+		s.bodies[j].vel.X--
+	} else if s.bodies[i].pos.X > s.bodies[j].pos.X {
+		s.bodies[i].vel.X--
+		s.bodies[j].vel.X++
+	}
+
+	if s.bodies[i].pos.Y < s.bodies[j].pos.Y {
+		s.bodies[i].vel.Y++
+		s.bodies[j].vel.Y--
+	} else if s.bodies[i].pos.Y > s.bodies[j].pos.Y {
+		s.bodies[i].vel.Y--
+		s.bodies[j].vel.Y++
+	}
+
+	if s.bodies[i].pos.Z < s.bodies[j].pos.Z {
+		s.bodies[i].vel.Z++
+		s.bodies[j].vel.Z--
+	} else if s.bodies[i].pos.Z > s.bodies[j].pos.Z {
+		s.bodies[i].vel.Z--
+		s.bodies[j].vel.Z++
+	}
+}
+
+func compare(i, j int64) int64 {
+	switch {
+	case i < j:
+		return 1
+	case i > j:
+		return -1
+	default:
+		return 0
 	}
 }
 
@@ -114,9 +148,21 @@ func (s *System) Energy() (totalEnergy int64) {
 	return totalEnergy
 }
 
-func (s *System) Print() {
+func (s *System) SPrint() string {
+	sb := strings.Builder{}
 	for _, b := range s.bodies {
-		println(b.String())
+		sb.WriteString(b.String())
+		sb.WriteRune('\n')
 	}
-	println()
+	return sb.String()
+}
+
+func (s *System) Equal(system *System) bool {
+	// We assume same size and same ordering of objects...
+	for i := range s.bodies {
+		if s.bodies[i] != system.bodies[i] {
+			return false
+		}
+	}
+	return true
 }
