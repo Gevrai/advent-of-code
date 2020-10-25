@@ -78,6 +78,10 @@ func GCD(a, b int) int {
 	return a
 }
 
+func LCM(a, b int) int {
+	return (a / GCD(a, b)) * b
+}
+
 func AbsInt64(i int64) int64 {
 	if i < 0 {
 		return -i

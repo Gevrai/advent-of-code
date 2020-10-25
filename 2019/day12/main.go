@@ -11,25 +11,28 @@ func main() {
 
 	system := NewSystem(input)
 
-	for i := 0; i < 10; i++ {
+	for i := 0; i < 1000; i++ {
 		system.Update()
 		println(system.SPrint())
 	}
 
 	println("Part one:", system.Energy())
 
-	initialSystem := NewSystem(input)
 	system = NewSystem(input)
 
-	steps := 0
-	for {
-		steps++
-		system.Update()
-		if system.Equal(initialSystem) {
-			break
-		}
+	var posX, posY, posZ []int64
+	for i := range system.bodies {
+		posX = append(posX, system.bodies[i].pos.X)
+		posY = append(posY, system.bodies[i].pos.Y)
+		posZ = append(posZ, system.bodies[i].pos.Z)
 	}
-	println("Part two:", steps)
+
+	// When are all cycle in phase?
+	println("Part two:", LCM(LCM(
+		NewSystem1D(posX).RunUntilCycle(),
+		NewSystem1D(posY).RunUntilCycle()),
+		NewSystem1D(posZ).RunUntilCycle()),
+	)
 }
 
 type Body struct {
