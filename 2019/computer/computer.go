@@ -13,6 +13,7 @@ type Computer interface {
 	Put(pc int, newValue big.Int)
 	Output() chan big.Int
 	Input(big.Int) error
+	OnExpectInput(func())
 }
 
 func InitComputer(input string) (Computer, error) {

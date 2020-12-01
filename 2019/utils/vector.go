@@ -29,3 +29,7 @@ func (v Vector) AngleWith(w Vector) float64 {
 func (v Vector) Magnitude() float64 {
 	return math.Sqrt(math.Pow(float64(v.X), 2) + math.Pow(float64(v.Y), 2))
 }
+
+func (v *Vector) String() string {
+	return Point{v.X, v.Y}.String()
+}

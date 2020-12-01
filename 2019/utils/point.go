@@ -1,5 +1,7 @@
 package utils
 
+import "fmt"
+
 type Point struct {
 	X, Y int
 }
@@ -57,4 +59,8 @@ func (p Point) LineDown(dist int) (path []Point) {
 		path = append(path, Point{p.X, j})
 	}
 	return path
+}
+
+func (p Point) String() string {
+	return fmt.Sprintf("<x=%3d, y=%3d>", p.X, p.Y)
 }

@@ -65,6 +65,8 @@ type computer struct {
 
 	input  chan big.Int
 	output chan big.Int
+
+	onExpectInput func()
 }
 
 func (c *computer) Fetch(ptr int) big.Int {
@@ -89,6 +91,10 @@ func (c *computer) Input(val big.Int) (err error) {
 	}()
 	c.input <- val
 	return nil
+}
+
+func (c *computer) OnExpectInput(onExpectInput func()) {
+	c.onExpectInput = onExpectInput
 }
 
 func (c *computer) Run() (done chan big.Int) {
@@ -196,6 +202,9 @@ func (c *computer) alu(f func(big.Int, big.Int) big.Int) {
 }
 
 func (c *computer) inputValue() {
+	if c.onExpectInput != nil {
+		go c.onExpectInput()
+	}
 	c.write(1, <-c.input)
 	c.instrPointer += 2
 }
