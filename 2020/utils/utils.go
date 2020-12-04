@@ -26,11 +26,8 @@ func ReadInputFile(filePath string) (lines []string) {
 	content, err := ioutil.ReadFile(filePath)
 	PanicIfError(err)
 
-	for _, untrimmedLine := range strings.Split(string(content), "\n") {
-		line := strings.TrimSpace(untrimmedLine)
-		if line != "" {
-			lines = append(lines, line)
-		}
+	for _, line := range strings.Split(string(content), "\n") {
+		lines = append(lines, line)
 	}
 	return lines
 }
