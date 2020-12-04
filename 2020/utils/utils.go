@@ -24,9 +24,7 @@ func ReadInputFileRelative() (line []string) {
 func ReadInputFile(filePath string) (lines []string) {
 
 	content, err := ioutil.ReadFile(filePath)
-	if err != nil {
-		panic(err.Error())
-	}
+	PanicIfError(err)
 
 	for _, untrimmedLine := range strings.Split(string(content), "\n") {
 		line := strings.TrimSpace(untrimmedLine)
@@ -51,13 +49,8 @@ func DownloadDayInput(year, day int, force bool) {
 			fmt.Sprintf("https://adventofcode.com/%d/day/%d/input", year, day),
 			"--cookie", fmt.Sprintf("session=%s", ReadCookie()),
 		).Output()
-		if err != nil {
-			panic(err)
-		}
-		err = ioutil.WriteFile(inputFile, out, os.ModePerm)
-		if err != nil {
-			panic(err)
-		}
+		PanicIfError(err)
+		PanicIfError(ioutil.WriteFile(inputFile, out, os.ModePerm))
 	}
 }
 
@@ -70,10 +63,14 @@ func ReadCookie() string {
 	cookieFile := path.Join(dir, "cookie")
 
 	content, err := ioutil.ReadFile(cookieFile)
-	if err != nil {
-		panic(err.Error())
-	}
+	PanicIfError(err)
 	return string(content)
+}
+
+func PanicIfError(err error) {
+	if err != nil {
+		panic(err)
+	}
 }
 
 func GCD(a, b int) int {

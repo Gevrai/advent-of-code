@@ -23,9 +23,7 @@ func createEntriesSet(input []string) map[int]struct{} {
 			continue
 		}
 		i, err := strconv.Atoi(strings.TrimSpace(s))
-		if err != nil {
-			panic(err)
-		}
+		utils.PanicIfError(err)
 		entries[i] = struct{}{}
 	}
 	return entries

@@ -41,13 +41,9 @@ func parseInput(input string) (min, max int, char, password string) {
 
 	var err error
 	min, err = strconv.Atoi(strings.TrimSpace(splits[0]))
-	if err != nil {
-		panic(err)
-	}
+	utils.PanicIfError(err)
 	max, err = strconv.Atoi(strings.TrimSpace(splits[1]))
-	if err != nil {
-		panic(err)
-	}
+	utils.PanicIfError(err)
 	return
 }
 
