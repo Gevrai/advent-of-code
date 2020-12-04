@@ -5,6 +5,7 @@ import (
 )
 
 func main() {
+	utils.DownloadDayInput(2020, 3, false)
 	input := utils.ReadInputFileRelative()
 
 	println("Part 1:", skiDown(input, 3, 1))

@@ -8,6 +8,7 @@ import (
 )
 
 func main() {
+	utils.DownloadDayInput(2020, 2, false)
 	input := utils.ReadInputFileRelative()
 	println("Part 1:", count(input, isValidFirstPolicy))
 	println("Part 2:", count(input, isValidSecondPolicy))

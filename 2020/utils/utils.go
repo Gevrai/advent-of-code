@@ -1,7 +1,10 @@
 package utils
 
 import (
+	"fmt"
 	"io/ioutil"
+	"os"
+	"os/exec"
 	"path"
 	"runtime"
 	"strings"
@@ -32,6 +35,45 @@ func ReadInputFile(filePath string) (lines []string) {
 		}
 	}
 	return lines
+}
+
+func DownloadDayInput(year, day int, force bool) {
+	// Relative path to where function is defined
+	_, file, _, ok := runtime.Caller(1)
+	if !ok {
+		panic("ReadInputFile caller returned not ok")
+	}
+	dir, _ := path.Split(file)
+	inputFile := path.Join(dir, "input.txt")
+
+	if _, err := os.Stat(inputFile); force || os.IsNotExist(err) {
+		out, err := exec.Command("curl",
+			fmt.Sprintf("https://adventofcode.com/%d/day/%d/input", year, day),
+			"--cookie", fmt.Sprintf("session=%s", ReadCookie()),
+		).Output()
+		if err != nil {
+			panic(err)
+		}
+		err = ioutil.WriteFile(inputFile, out, os.ModePerm)
+		if err != nil {
+			panic(err)
+		}
+	}
+}
+
+func ReadCookie() string {
+	_, file, _, ok := runtime.Caller(0)
+	if !ok {
+		panic("ReadCookie caller returned not ok")
+	}
+	dir, _ := path.Split(file)
+	cookieFile := path.Join(dir, "cookie")
+
+	content, err := ioutil.ReadFile(cookieFile)
+	if err != nil {
+		panic(err.Error())
+	}
+	return string(content)
 }
 
 func GCD(a, b int) int {

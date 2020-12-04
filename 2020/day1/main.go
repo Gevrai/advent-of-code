@@ -8,6 +8,7 @@ import (
 )
 
 func main() {
+	utils.DownloadDayInput(2020, 1, false)
 	input := utils.ReadInputFileRelative()
 	entries := createEntriesSet(input)
 
