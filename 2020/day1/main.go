@@ -9,7 +9,7 @@ import (
 
 func main() {
 	utils.DownloadDayInput(2020, 1, false)
-	input := utils.ReadInputFileRelative()
+	input := utils.ReadInputFileRelativeSplitNewline()
 	entries := createEntriesSet(input)
 
 	println("Part 1:", multArray(sumTo(entries, 2, 2020)))

@@ -10,26 +10,31 @@ import (
 	"strings"
 )
 
-func ReadInputFileRelative() (line []string) {
+const inputFile = "input.txt"
+
+func ReadInputFileRelativeSplitNewline(filename ...string) (line []string) {
+	content := ReadInputFileRelative(filename...)
+	lines := strings.Split(content, "\n")
+	if len(lines) > 0 && lines[len(lines)-1] == "" {
+		return lines[:len(lines)-1]
+	}
+	return lines
+}
+
+func ReadInputFileRelative(filename ...string) string {
+	if len(filename) == 0 {
+		filename = []string{inputFile}
+	}
 	// Relative path to where function is defined
-	_, file, _, ok := runtime.Caller(1)
+	_, file, _, ok := runtime.Caller(2)
 	if !ok {
 		panic("ReadInputFile caller returned not ok")
 	}
 	dir, _ := path.Split(file)
-	inputFile := path.Join(dir, "input.txt")
-	return ReadInputFile(inputFile)
-}
-
-func ReadInputFile(filePath string) (lines []string) {
-
-	content, err := ioutil.ReadFile(filePath)
+	inputFile := path.Join(dir, filename[0])
+	content, err := ioutil.ReadFile(inputFile)
 	PanicIfError(err)
-
-	for _, line := range strings.Split(string(content), "\n") {
-		lines = append(lines, line)
-	}
-	return lines
+	return string(content)
 }
 
 func DownloadDayInput(year, day int, force bool) {
@@ -93,4 +98,24 @@ func AbsInt64(i int64) int64 {
 	} else {
 		return i
 	}
+}
+
+func Count(inputs []string, condition func(string) bool) int {
+	count := 0
+	for _, s := range inputs {
+		if condition(s) {
+			count++
+		}
+	}
+	return count
+}
+
+func Filter(inputs []string, condition func(string) bool) []string {
+	var output []string
+	for _, s := range inputs {
+		if condition(s) {
+			output = append(output, s)
+		}
+	}
+	return output
 }

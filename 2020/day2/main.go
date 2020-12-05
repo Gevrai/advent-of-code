@@ -9,9 +9,9 @@ import (
 
 func main() {
 	utils.DownloadDayInput(2020, 2, false)
-	input := utils.ReadInputFileRelative()
-	println("Part 1:", count(input, isValidFirstPolicy))
-	println("Part 2:", count(input, isValidSecondPolicy))
+	input := utils.ReadInputFileRelativeSplitNewline()
+	println("Part 1:", utils.Count(input, isValidFirstPolicy))
+	println("Part 2:", utils.Count(input, isValidSecondPolicy))
 }
 
 func isValidFirstPolicy(line string) bool {
@@ -45,14 +45,4 @@ func parseInput(input string) (min, max int, char, password string) {
 	max, err = strconv.Atoi(strings.TrimSpace(splits[1]))
 	utils.PanicIfError(err)
 	return
-}
-
-func count(inputs []string, condition func(string) bool) int {
-	count := 0
-	for _, line := range inputs {
-		if condition(line) {
-			count++
-		}
-	}
-	return count
 }

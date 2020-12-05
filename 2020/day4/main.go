@@ -1,106 +1,63 @@
 package main
 
 import (
+	"regexp"
 	"strconv"
 	"strings"
 
 	"advent-of-code-2020/utils"
 )
 
+type Field struct {
+	Mandatory bool
+	Validator func(string) bool
+}
+
+var validators = map[string]Field{
+	"byr": {true, func(s string) bool { return isNumber(s, 1920, 2002) }},
+	"iyr": {true, func(s string) bool { return isNumber(s, 2010, 2020) }},
+	"eyr": {true, func(s string) bool { return isNumber(s, 2020, 2030) }},
+	"hgt": {true, func(s string) bool {
+		n, unit := s[:len(s)-2], s[len(s)-2:]
+		return (unit == "cm" && isNumber(n, 150, 193)) || (unit == "in" && isNumber(n, 59, 76))
+	}},
+	"hcl": {true, func(s string) bool { return regexp.MustCompile("^#[0-9a-f]{6}$").MatchString(s) }},
+	"ecl": {true, func(s string) bool { return regexp.MustCompile("^(amb|blu|brn|gry|grn|hzl|oth)$").MatchString(s) }},
+	"pid": {true, func(s string) bool { return regexp.MustCompile("^[0-9]{9}$").MatchString(s) }},
+	"cid": {false, func(s string) bool { return true }},
+}
+
 func main() {
 	utils.DownloadDayInput(2020, 4, false)
-	input := utils.ReadInputFileRelative()
+	input := utils.ReadInputFileRelativeSplitNewline()
+	passports := strings.Split(strings.Join(input, " "), "  ")
+	println("Part 1:", utils.Count(passports, containsAllMandatoryFields))
+	println("Part 2:", utils.Count(passports, func(s string) bool {
+		return containsAllMandatoryFields(s) && allFieldsAreValid(s)
+	}))
+}
 
-	passport := []string{""}
-	current := 0
-	for _, l := range input {
-		if strings.TrimSpace(l) == "" {
-			current++
-			passport = append(passport, "")
-		} else {
-			passport[current] += " " + l
-		}
-	}
+func isNumber(s string, min, max int) bool {
+	i, err := strconv.Atoi(s)
+	return err == nil && min <= i && i <= max
+}
 
-	mandatory := []string{
-		"byr:",
-		"iyr:",
-		"eyr:",
-		"hgt:",
-		"hcl:",
-		"ecl:",
-		"pid:",
-	}
-
-	count := 0
-	for _, p := range passport {
-		invalid := false
-		for _, f := range mandatory {
-			if !strings.Contains(p, f) {
-				invalid = true
-			}
-		}
-		if !invalid {
-			count++
-		}
-	}
-
-	println("Part 1:", count)
-
-	isNumber := func(s string, min, max int) bool {
-		i, err := strconv.Atoi(s)
-		if err != nil {
+func containsAllMandatoryFields(passport string) bool {
+	for k, v := range validators {
+		if v.Mandatory && !strings.Contains(passport, k) {
 			return false
 		}
-		return min <= i && i <= max
 	}
+	return true
+}
 
-	validators := map[string]func(string) bool{
-		"byr": func(s string) bool { return len(s) == 4 && isNumber(s, 1920, 2002) },
-		"iyr": func(s string) bool { return len(s) == 4 && isNumber(s, 2010, 2020) },
-		"eyr": func(s string) bool { return len(s) == 4 && isNumber(s, 2020, 2030) },
-		"hgt": func(s string) bool {
-			return (strings.Contains(s, "cm") && isNumber(s[:len(s)-2], 150, 193)) ||
-				(strings.Contains(s, "in") && isNumber(s[:len(s)-2], 59, 76))
-		},
-		"hcl": func(s string) bool {
-			if s[0] != '#' || len(s) != 7 {
-				return false
-			}
-			for _, c := range "0123456789abcdef" {
-				s = strings.ReplaceAll(s, string(c), "")
-			}
-			return len(s) == 1 // only '#' is left
-		},
-		"ecl": func(s string) bool {
-			return s == "amb" || s == "blu" || s == "brn" || s == "gry" || s == "grn" || s == "hzl" || s == "oth"
-		},
-		"pid": func(s string) bool { return len(s) == 9 && isNumber(s, 0, 10e10) },
-		"cid": func(s string) bool { return true },
-	}
-
-	count = 0
-	for _, p := range passport {
-		invalid := false
-		for _, l := range strings.Split(p, " ") {
-			if l == "" {
-				continue
-			}
-			splits := strings.Split(l, ":")
-			v, ok := validators[splits[0]]
-			if !ok || !v(strings.TrimSpace(splits[1])) {
-				invalid = true
-			}
-		}
-		for _, f := range mandatory {
-			if !strings.Contains(p, f) {
-				invalid = true
-			}
-		}
-		if !invalid {
-			count++
+func allFieldsAreValid(passport string) bool {
+	for _, l := range strings.Split(passport, " ") {
+		splits := strings.Split(l, ":")
+		field, ok := validators[splits[0]]
+		if !ok || !field.Validator(strings.TrimSpace(splits[1])) {
+			return false
 		}
 	}
-
-	println("Part 2:", count)
+	return true
 }
