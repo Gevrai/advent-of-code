@@ -1,12 +1,12 @@
 package main
 
 import (
-	"advent-of-code-2020/utils"
+	. "advent-of-code-2020/utils"
 )
 
 func main() {
-	utils.DownloadDayInput(2020, 3, false)
-	input := utils.ReadInputFileRelativeSplitNewline()
+	DownloadDayInput(2020, 3, false)
+	input := SplitNewLine(ReadInputFileRelative())
 
 	println("Part 1:", skiDown(input, 3, 1))
 

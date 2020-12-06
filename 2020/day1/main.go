@@ -4,12 +4,12 @@ import (
 	"strconv"
 	"strings"
 
-	"advent-of-code-2020/utils"
+	. "advent-of-code-2020/utils"
 )
 
 func main() {
-	utils.DownloadDayInput(2020, 1, false)
-	input := utils.ReadInputFileRelativeSplitNewline()
+	DownloadDayInput(2020, 1, false)
+	input := SplitNewLine(ReadInputFileRelative())
 	entries := createEntriesSet(input)
 
 	println("Part 1:", multArray(sumTo(entries, 2, 2020)))
@@ -23,7 +23,7 @@ func createEntriesSet(input []string) map[int]struct{} {
 			continue
 		}
 		i, err := strconv.Atoi(strings.TrimSpace(s))
-		utils.PanicIfError(err)
+		PanicIfError(err)
 		entries[i] = struct{}{}
 	}
 	return entries

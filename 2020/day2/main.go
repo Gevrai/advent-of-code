@@ -4,14 +4,14 @@ import (
 	"strconv"
 	"strings"
 
-	"advent-of-code-2020/utils"
+	. "advent-of-code-2020/utils"
 )
 
 func main() {
-	utils.DownloadDayInput(2020, 2, false)
-	input := utils.ReadInputFileRelativeSplitNewline()
-	println("Part 1:", utils.Count(input, isValidFirstPolicy))
-	println("Part 2:", utils.Count(input, isValidSecondPolicy))
+	DownloadDayInput(2020, 2, false)
+	input := SplitNewLine(ReadInputFileRelative())
+	println("Part 1:", Count(input, isValidFirstPolicy))
+	println("Part 2:", Count(input, isValidSecondPolicy))
 }
 
 func isValidFirstPolicy(line string) bool {
@@ -41,8 +41,8 @@ func parseInput(input string) (min, max int, char, password string) {
 
 	var err error
 	min, err = strconv.Atoi(strings.TrimSpace(splits[0]))
-	utils.PanicIfError(err)
+	PanicIfError(err)
 	max, err = strconv.Atoi(strings.TrimSpace(splits[1]))
-	utils.PanicIfError(err)
+	PanicIfError(err)
 	return
 }

@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"strings"
 
-	"advent-of-code-2020/utils"
+	. "advent-of-code-2020/utils"
 )
 
 type Field struct {
@@ -28,11 +28,11 @@ var validators = map[string]Field{
 }
 
 func main() {
-	utils.DownloadDayInput(2020, 4, false)
-	input := utils.ReadInputFileRelativeSplitNewline()
+	DownloadDayInput(2020, 4, false)
+	input := SplitNewLine(ReadInputFileRelative())
 	passports := strings.Split(strings.Join(input, " "), "  ")
-	println("Part 1:", utils.Count(passports, containsAllMandatoryFields))
-	println("Part 2:", utils.Count(passports, func(s string) bool {
+	println("Part 1:", Count(passports, containsAllMandatoryFields))
+	println("Part 2:", Count(passports, func(s string) bool {
 		return containsAllMandatoryFields(s) && allFieldsAreValid(s)
 	}))
 }
