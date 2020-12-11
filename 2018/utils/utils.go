@@ -3,7 +3,6 @@ package utils
 import (
 	"fmt"
 	"io/ioutil"
-	"math"
 	"os"
 	"os/exec"
 	"path"
@@ -14,12 +13,21 @@ import (
 
 const inputFile = "input.txt"
 
+func ReadInputFileRelativeSplitNewline(filename ...string) (line []string) {
+	content := ReadInputFileRelative(filename...)
+	lines := strings.Split(content, "\n")
+	if len(lines) > 0 && lines[len(lines)-1] == "" {
+		return lines[:len(lines)-1]
+	}
+	return lines
+}
+
 func ReadInputFileRelative(filename ...string) string {
 	if len(filename) == 0 {
 		filename = []string{inputFile}
 	}
 	// Relative path to where function is defined
-	_, file, _, ok := runtime.Caller(1)
+	_, file, _, ok := runtime.Caller(2)
 	if !ok {
 		panic("ReadInputFile caller returned not ok")
 	}
@@ -28,14 +36,6 @@ func ReadInputFileRelative(filename ...string) string {
 	content, err := ioutil.ReadFile(inputFile)
 	PanicIfError(err)
 	return string(content)
-}
-
-func SplitNewLine(content string) []string {
-	lines := strings.Split(string(content), "\n")
-	if len(lines) > 0 && lines[len(lines)-1] == "" {
-		return lines[:len(lines)-1]
-	}
-	return lines
 }
 
 func DownloadDayInput(year, day int, force bool) {
@@ -77,7 +77,7 @@ func PanicIfError(err error) {
 }
 
 func ParseInt(s string, base int) int {
-	i, err := strconv.ParseInt(strings.TrimSpace(s), base, 64)
+	i, err := strconv.ParseInt(s, base, 64)
 	PanicIfError(err)
 	return int(i)
 }
@@ -99,32 +99,12 @@ func LCM(a, b int) int {
 	return (a / GCD(a, b)) * b
 }
 
-func Abs(i int) int {
+func AbsInt64(i int64) int64 {
 	if i < 0 {
 		return -i
 	} else {
 		return i
 	}
-}
-
-func Min(l []int) int {
-	min := math.MaxInt64
-	for _, i := range l {
-		if i < min {
-			min = i
-		}
-	}
-	return min
-}
-
-func Max(l []int) int {
-	max := math.MinInt64
-	for _, i := range l {
-		if i > max {
-			max = i
-		}
-	}
-	return max
 }
 
 func Count(inputs []string, condition func(string) bool) int {
