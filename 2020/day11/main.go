@@ -112,36 +112,28 @@ func simulate2(plan [][]byte) [][]byte {
 	return newPlan
 }
 
-func countAdjacentOccupied(plan [][]byte, i, j int) int {
-	return 0 +
-		boolAsInt(isOccupied(plan, i-1, j-1)) +
-		boolAsInt(isOccupied(plan, i-1, j)) +
-		boolAsInt(isOccupied(plan, i-1, j+1)) +
-		boolAsInt(isOccupied(plan, i, j-1)) +
-		boolAsInt(isOccupied(plan, i, j+1)) +
-		boolAsInt(isOccupied(plan, i+1, j-1)) +
-		boolAsInt(isOccupied(plan, i+1, j)) +
-		boolAsInt(isOccupied(plan, i+1, j+1))
+var around = []struct{ i, j int }{
+	{-1, -1}, {-1, 0}, {-1, +1},
+	{0, -1}, {0, +1},
+	{+1, -1}, {+1, 0}, {+1, +1},
 }
 
-func countVisibleOccupied(plan [][]byte, i, j int) int {
-	return 0 +
-		boolAsInt(isVisibleOccupied(plan, i, j, -1, -1)) +
-		boolAsInt(isVisibleOccupied(plan, i, j, -1, 0)) +
-		boolAsInt(isVisibleOccupied(plan, i, j, -1, 1)) +
-		boolAsInt(isVisibleOccupied(plan, i, j, 0, -1)) +
-		boolAsInt(isVisibleOccupied(plan, i, j, 0, 1)) +
-		boolAsInt(isVisibleOccupied(plan, i, j, 1, -1)) +
-		boolAsInt(isVisibleOccupied(plan, i, j, 1, 0)) +
-		boolAsInt(isVisibleOccupied(plan, i, j, 1, 1))
-}
-
-func boolAsInt(b bool) int {
-	if b {
-		return 1
-	} else {
-		return 0
+func countAdjacentOccupied(plan [][]byte, x, y int) (count int) {
+	for _, a := range around {
+		if isOccupied(plan, x+a.i, y+a.j) {
+			count++
+		}
 	}
+	return count
+}
+
+func countVisibleOccupied(plan [][]byte, x, y int) (count int) {
+	for _, a := range around {
+		if isVisibleOccupied(plan, x, y, a.i, a.j) {
+			count++
+		}
+	}
+	return count
 }
 
 func isOccupied(plan [][]byte, i, j int) bool {

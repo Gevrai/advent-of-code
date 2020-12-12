@@ -82,6 +82,10 @@ func ParseInt(s string, base int) int {
 	return int(i)
 }
 
+func Mod(a, b int) int {
+	return (a%b + b) % b
+}
+
 func GCD(a, b int) int {
 	if a < 0 {
 		a = -a
