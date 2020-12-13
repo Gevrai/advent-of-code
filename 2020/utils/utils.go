@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/exec"
 	"path"
+	"reflect"
 	"runtime"
 	"strconv"
 	"strings"
@@ -73,6 +74,12 @@ func ReadCookie() string {
 func PanicIfError(err error) {
 	if err != nil {
 		panic(err)
+	}
+}
+
+func AssertEqual(a, b interface{}) {
+	if !reflect.DeepEqual(a, b) {
+		panic(fmt.Sprintf("%v != %v", a, b))
 	}
 }
 

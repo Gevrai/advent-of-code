@@ -1,6 +1,8 @@
 package main
 
 import (
+	"time"
+
 	"advent-of-code-2019/computer"
 	. "advent-of-code-2019/utils"
 )
@@ -10,15 +12,26 @@ type Arcade struct {
 	screen       Screen
 	currentScore int64
 
-	ai ArcadeAI
+	ball   Point
+	paddle Point
 }
 
 func (a *Arcade) RunGame() (score int64) {
 	done := a.cp.Run()
 
 	a.cp.OnExpectInput(func() {
-		joystickInput := a.ai.JoystickInput(a.screen)
-		err := a.cp.Input(BigInt(joystickInput))
+		time.Sleep(1 * time.Millisecond)
+		a.DrawScreen()
+		input := 0
+		if a.paddle.X < a.ball.X {
+			input = 1
+			a.paddle.X += 1
+		}
+		if a.paddle.X > a.ball.X {
+			input = -1
+			a.paddle.X -= 1
+		}
+		err := a.cp.Input(BigInt(input))
 		if err != nil {
 			println("couldn't input joystick:", err)
 		}
@@ -26,13 +39,14 @@ func (a *Arcade) RunGame() (score int64) {
 	for {
 		select {
 		case <-done:
+			// Game over
 			return a.currentScore
 		case x := <-a.cp.Output():
 			y := <-a.cp.Output()
 			param := <-a.cp.Output()
 
 			if x.Int64() == -1 && y.Int64() == 0 {
-				// Show score
+				// Won the game !
 				a.currentScore = param.Int64()
 				if a.CountTiles(Block) == 0 {
 					return a.currentScore
@@ -44,6 +58,12 @@ func (a *Arcade) RunGame() (score int64) {
 					Y: int(y.Int64()),
 				}
 				tile := Tile(param.Int64())
+				switch tile {
+				case Ball:
+					a.ball = p
+				case HorizontalPaddle:
+					a.paddle = p
+				}
 				a.screen.Paint(p, tile)
 			}
 		}
