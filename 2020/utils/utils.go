@@ -83,10 +83,23 @@ func AssertEqual(a, b interface{}) {
 	}
 }
 
-func ParseInt(s string, base int) int {
-	i, err := strconv.ParseInt(strings.TrimSpace(s), base, 64)
+func ParseInt(s string, base ...int) int {
+	if len(base) > 1 {
+		panic(fmt.Sprintf("only one base accepted, got %v", base))
+	}
+	if len(base) == 0 {
+		base = append(base, 10)
+	}
+	i, err := strconv.ParseInt(strings.TrimSpace(s), base[0], 64)
 	PanicIfError(err)
 	return int(i)
+}
+
+func Trims(input string, trims ...string) string {
+	for _, t := range trims {
+		input = strings.Trim(input, t)
+	}
+	return input
 }
 
 func Mod(a, b int) int {

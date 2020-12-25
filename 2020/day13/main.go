@@ -28,7 +28,6 @@ func main() {
 	}
 	println("Part 1:", closest*bus)
 
-	//t := earliest(input[1])
 	AssertEqual(earliest("17,x,13,19"), 3417)
 	println("Part 2:", earliest(input[1]))
 }
