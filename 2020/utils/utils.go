@@ -102,6 +102,14 @@ func Trims(input string, trims ...string) string {
 	return input
 }
 
+func Reverse(input string) string {
+	out := make([]byte, len(input))
+	for i := range input {
+		out[len(input)-1-i] = input[i]
+	}
+	return string(out)
+}
+
 func Mod(a, b int) int {
 	return (a%b + b) % b
 }
