@@ -102,6 +102,17 @@ func Trims(input string, trims ...string) string {
 	return input
 }
 
+func ReverseSlice(slice interface{}) {
+	if slice == nil {
+		return
+	}
+	swap := reflect.Swapper(slice)
+	l := reflect.ValueOf(slice).Len()
+	for i := 0; i < l/2; i++ {
+		swap(i, l-i-1)
+	}
+}
+
 func Reverse(input string) string {
 	out := make([]byte, len(input))
 	for i := range input {
@@ -139,7 +150,7 @@ func Abs(i int) int {
 	}
 }
 
-func Min(l []int) int {
+func Min(l ...int) int {
 	min := math.MaxInt64
 	for _, i := range l {
 		if i < min {
@@ -149,7 +160,7 @@ func Min(l []int) int {
 	return min
 }
 
-func Max(l []int) int {
+func Max(l ...int) int {
 	max := math.MinInt64
 	for _, i := range l {
 		if i > max {

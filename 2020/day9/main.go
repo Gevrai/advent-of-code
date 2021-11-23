@@ -36,7 +36,7 @@ func main() {
 		}
 	}
 
-	println("Part 2:", Min(n[i:j])+Max(n[i:j]))
+	println("Part 2:", Min(n[i:j]...)+Max(n[i:j]...))
 }
 
 func checkIsSum(i int, l []int) bool {
