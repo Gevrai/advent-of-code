@@ -32,11 +32,24 @@ func ReadInputFileRelative(filename ...string) string {
 }
 
 func SplitNewLine(content string) []string {
-	lines := strings.Split(string(content), "\n")
+	lines := strings.Split(content, "\n")
 	if len(lines) > 0 && lines[len(lines)-1] == "" {
 		return lines[:len(lines)-1]
 	}
 	return lines
+}
+
+func SplitEmptySlice(content []string) (parts [][]string) {
+	parts = append(parts, []string{})
+	for _, l := range content {
+		if strings.TrimSpace(l) == "" {
+			parts = append(parts, []string{})
+			continue
+		} else {
+			parts[len(parts)-1] = append(parts[len(parts)-1], l)
+		}
+	}
+	return parts
 }
 
 func DownloadDayInput(year, day int, force bool) {
@@ -188,4 +201,12 @@ func Filter(inputs []string, condition func(string) bool) []string {
 		}
 	}
 	return output
+}
+
+func TransposeSquare(matrix [][]int) {
+	for i := 0; i < len(matrix); i++ {
+		for j := i + 1; j < len(matrix[i]); j++ {
+			matrix[i][j], matrix[j][i] = matrix[j][i], matrix[i][j]
+		}
+	}
 }
