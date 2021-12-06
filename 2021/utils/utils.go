@@ -210,3 +210,10 @@ func TransposeSquare(matrix [][]int) {
 		}
 	}
 }
+
+func Sum(list []int) (count int) {
+	for _, i := range list {
+		count += i
+	}
+	return count
+}
