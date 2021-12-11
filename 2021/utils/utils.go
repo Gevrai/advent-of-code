@@ -217,3 +217,14 @@ func Sum(list []int) (count int) {
 	}
 	return count
 }
+
+func Mult(list []int) (count int) {
+	if len(list) == 0 {
+		return 0
+	}
+	count = 1
+	for _, i := range list {
+		count *= i
+	}
+	return count
+}
