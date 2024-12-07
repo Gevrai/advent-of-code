@@ -96,16 +96,25 @@ func AssertEqual(a, b interface{}) {
 	}
 }
 
-func ParseInt(s string, base ...int) int {
-	if len(base) > 1 {
-		panic(fmt.Sprintf("only one base accepted, got %v", base))
-	}
-	if len(base) == 0 {
-		base = append(base, 10)
-	}
-	i, err := strconv.ParseInt(strings.TrimSpace(s), base[0], 64)
+func ParseInt(s string) int {
+	return ParseIntBase(s, 10)
+}
+
+func ParseIntBase(s string, base int) int {
+	i, err := strconv.ParseInt(strings.TrimSpace(s), base, 64)
 	PanicIfError(err)
 	return int(i)
+}
+
+func Map[T, S any, TL ~[]T](list TL, mapper func(T) S) []S {
+	if list == nil {
+		return nil
+	}
+	out := make([]S, len(list))
+	for i := range list {
+		out[i] = mapper(list[i])
+	}
+	return out
 }
 
 func Trims(input string, trims ...string) string {
